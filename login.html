@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f0f2f5;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* ── LOGIN BOX ── */
+    .box {
+      background: #fff;
+      width: 360px;
+      padding: 40px 36px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 1.5rem;
+      color: #222;
+      margin-bottom: 6px;
+    }
+
+    .sub {
+      text-align: center;
+      font-size: 0.82rem;
+      color: #888;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.82rem;
+      color: #555;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      color: #333;
+      outline: none;
+      transition: border-color 0.25s;
+      margin-bottom: 6px;
+    }
+
+    input:focus { border-color: #4f6ef7; }
+    input.error { border-color: #e74c3c; }
+    input.ok    { border-color: #27ae60; }
+
+    .hint {
+      font-size: 0.73rem;
+      color: #aaa;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .err-text {
+      font-size: 0.75rem;
+      color: #e74c3c;
+      margin-top: -4px;
+      margin-bottom: 12px;
+      display: none;
+    }
+    .err-text.show { display: block; }
+
+    .pw-wrap { position: relative; }
+    .pw-wrap input { padding-right: 38px; }
+    .eye {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      color: #aaa;
+      padding: 0;
+      line-height: 1;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 11px;
+      background: #4f6ef7;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s;
+    }
+    button[type="submit"]:hover { background: #3a57e8; }
+
+    .msg {
+      margin-top: 16px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      text-align: center;
+      display: none;
+    }
+    .msg.fail { background: #fdedec; color: #c0392b; border: 1px solid #f5b7b1; display: block; }
+
+    /* ── LOGOUT BOX ── */
+    .logout-box {
+      display: none;
+      background: #fff;
+      width: 360px;
+      padding: 40px 36px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      animation: fadeIn 0.4s ease;
+    }
+    .logout-box.show { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .avatar {
+      width: 72px;
+      height: 72px;
+      background: #4f6ef7;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 18px;
+      color: #fff;
+    }
+
+    .logout-box h2 {
+      font-size: 1.3rem;
+      color: #222;
+      margin-bottom: 6px;
+    }
+
+    .logout-box .welcome {
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 6px;
+    }
+
+    .username-display {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #4f6ef7;
+      margin-bottom: 24px;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #eee;
+      margin-bottom: 24px;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      color: #555;
+      margin-bottom: 28px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      background: #27ae60;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(39,174,96,0.4); }
+      50%      { box-shadow: 0 0 0 6px rgba(39,174,96,0); }
+    }
+
+    .btn-logout {
+      width: 100%;
+      padding: 11px;
+      background: #fff;
+      color: #e74c3c;
+      border: 1.5px solid #e74c3c;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-logout:hover {
+      background: #e74c3c;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── LOGIN BOX ── -->
+  <div class="box" id="loginBox">
+    <h2>Login</h2>
+    <p class="sub">Enter your credentials to continue</p>
+
+    <form id="form" novalidate>
+
+      <label for="uname">Username</label>
+      <input type="text" id="uname" placeholder="e.g. JohnDoe" autocomplete="username"/>
+      <p class="hint">Letters only &nbsp;( A – Z &nbsp;/&nbsp; a – z )</p>
+      <p class="err-text" id="unameErr">Username must contain letters only (a–z, A–Z).</p>
+
+      <label for="pass">Password</label>
+      <div class="pw-wrap">
+        <input type="password" id="pass" placeholder="e.g. Hello@123" autocomplete="current-password"/>
+        <button type="button" class="eye" id="eyeBtn">👁</button>
+      </div>
+      <p class="hint">Letters, numbers &amp; symbols &nbsp;( ! @ # $ % ^ &amp; * )</p>
+      <p class="err-text" id="passErr">Password must include letters, numbers and at least one symbol (!@#$%^&amp;*).</p>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <!-- ── LOGOUT BOX ── -->
+  <div class="logout-box" id="logoutBox">
+    <div class="avatar">👤</div>
+    <h2>Welcome Back!</h2>
+    <p class="welcome">Logged in as</p>
+    <p class="username-display" id="displayName"></p>
+    <hr class="divider"/>
+    <div class="status-row">
+      <span class="dot"></span>
+      <span>Session Active</span>
+    </div>
+    <button class="btn-logout" id="logoutBtn">Logout</button>
+  </div>
+
+  <script>
+    const unameInput  = document.getElementById('uname');
+    const passInput   = document.getElementById('pass');
+    const eyeBtn      = document.getElementById('eyeBtn');
+    const unameErr    = document.getElementById('unameErr');
+    const passErr     = document.getElementById('passErr');
+    const msg         = document.getElementById('msg');
+    const form        = document.getElementById('form');
+    const loginBox    = document.getElementById('loginBox');
+    const logoutBox   = document.getElementById('logoutBox');
+    const displayName = document.getElementById('displayName');
+    const logoutBtn   = document.getElementById('logoutBtn');
+
+    const unameRegex = /^[a-zA-Z]+$/;
+    const passRegex  = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).+$/;
+
+    // ── Eye toggle ──
+    eyeBtn.addEventListener('click', () => {
+      const show = passInput.type === 'password';
+      passInput.type     = show ? 'text' : 'password';
+      eyeBtn.textContent = show ? '🙈' : '👁';
+    });
+
+    // ── Live validation ──
+    function validate(input, regex, errEl) {
+      const val = input.value.trim();
+      if (val === '') { input.className = ''; errEl.classList.remove('show'); return false; }
+      const ok = regex.test(val);
+      input.className = ok ? 'ok' : 'error';
+      errEl.classList.toggle('show', !ok);
+      return ok;
+    }
+
+    unameInput.addEventListener('input', () => validate(unameInput, unameRegex, unameErr));
+    passInput.addEventListener('input',  () => validate(passInput,  passRegex,  passErr));
+
+    // ── Login submit ──
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      msg.className = 'msg';
+      msg.textContent = '';
+
+      const uOk = validate(unameInput, unameRegex, unameErr);
+      const pOk = validate(passInput,  passRegex,  passErr);
+
+      if (!unameInput.value.trim() || !passInput.value.trim()) {
+        msg.textContent = 'Please fill in both fields.';
+        msg.classList.add('fail');
+        return;
+      }
+
+      if (uOk && pOk) {
+        // Show logout box
+        displayName.textContent = unameInput.value.trim();
+        loginBox.style.display  = 'none';
+        logoutBox.classList.add('show');
+      } else {
+        msg.textContent = '✖ Please fix the errors above and try again.';
+        msg.classList.add('fail');
+      }
+    });
+
+    // ── Logout ──
+    logoutBtn.addEventListener('click', () => {
+      logoutBox.classList.remove('show');
+      loginBox.style.display = 'block';
+      unameInput.value = '';
+      passInput.value  = '';
+      unameInput.className = '';
+      passInput.className  = '';
+      unameErr.classList.remove('show');
+      passErr.classList.remove('show');
+      msg.className = 'msg';
+      passInput.type = 'password';
+      eyeBtn.textContent = '👁';
+    });
+  </script>
+
+</body>
+</html>
