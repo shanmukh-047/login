@@ -226,17 +226,15 @@
     <form id="form" novalidate>
 
       <label for="uname">Username</label>
-      <input type="text" id="uname" placeholder="e.g. JohnDoe" autocomplete="username"/>
-      <p class="hint">Letters only &nbsp;( A – Z &nbsp;/&nbsp; a – z )</p>
-      <p class="err-text" id="unameErr">Username must contain letters only (a–z, A–Z).</p>
+      <input type="text" id="uname" placeholder="Enter your username" autocomplete="username"/>
+      <p class="err-text" id="unameErr">Please enter your username.</p>
 
       <label for="pass">Password</label>
       <div class="pw-wrap">
-        <input type="password" id="pass" placeholder="e.g. Hello@123" autocomplete="current-password"/>
+        <input type="password" id="pass" placeholder="Enter your password" autocomplete="current-password"/>
         <button type="button" class="eye" id="eyeBtn">👁</button>
       </div>
-      <p class="hint">Letters, numbers &amp; symbols &nbsp;( ! @ # $ % ^ &amp; * )</p>
-      <p class="err-text" id="passErr">Password must include letters, numbers and at least one symbol (!@#$%^&amp;*).</p>
+      <p class="err-text" id="passErr">Please enter your password.</p>
 
       <button type="submit">Login</button>
     </form>
@@ -259,6 +257,12 @@
   </div>
 
   <script>
+    // ── Credentials ──
+    const USERS = {
+      "Protolearn":  "Proto@001",
+      "Protolearn1": "Proto@002"
+    };
+
     const unameInput  = document.getElementById('uname');
     const passInput   = document.getElementById('pass');
     const eyeBtn      = document.getElementById('eyeBtn');
@@ -271,9 +275,6 @@
     const displayName = document.getElementById('displayName');
     const logoutBtn   = document.getElementById('logoutBtn');
 
-    const unameRegex = /^[a-zA-Z]+$/;
-    const passRegex  = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).+$/;
-
     // ── Eye toggle ──
     eyeBtn.addEventListener('click', () => {
       const show = passInput.type === 'password';
@@ -281,42 +282,53 @@
       eyeBtn.textContent = show ? '🙈' : '👁';
     });
 
-    // ── Live validation ──
-    function validate(input, regex, errEl) {
-      const val = input.value.trim();
-      if (val === '') { input.className = ''; errEl.classList.remove('show'); return false; }
-      const ok = regex.test(val);
-      input.className = ok ? 'ok' : 'error';
-      errEl.classList.toggle('show', !ok);
-      return ok;
+    // ── Reset field styles ──
+    function resetField(input, errEl) {
+      input.className = '';
+      errEl.classList.remove('show');
     }
 
-    unameInput.addEventListener('input', () => validate(unameInput, unameRegex, unameErr));
-    passInput.addEventListener('input',  () => validate(passInput,  passRegex,  passErr));
+    unameInput.addEventListener('input', () => resetField(unameInput, unameErr));
+    passInput.addEventListener('input',  () => resetField(passInput,  passErr));
 
     // ── Login submit ──
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      msg.className = 'msg';
+      msg.className   = 'msg';
       msg.textContent = '';
 
-      const uOk = validate(unameInput, unameRegex, unameErr);
-      const pOk = validate(passInput,  passRegex,  passErr);
+      const uid = unameInput.value.trim();
+      const pw  = passInput.value;
 
-      if (!unameInput.value.trim() || !passInput.value.trim()) {
-        msg.textContent = 'Please fill in both fields.';
-        msg.classList.add('fail');
-        return;
+      let valid = true;
+
+      if (!uid) {
+        unameInput.className = 'error';
+        unameErr.classList.add('show');
+        valid = false;
       }
+      if (!pw) {
+        passInput.className = 'error';
+        passErr.classList.add('show');
+        valid = false;
+      }
+      if (!valid) return;
 
-      if (uOk && pOk) {
-        // Show logout box
-        displayName.textContent = unameInput.value.trim();
-        loginBox.style.display  = 'none';
-        logoutBox.classList.add('show');
+      // ── Check credentials ──
+      if (USERS[uid] && USERS[uid] === pw) {
+        unameInput.className = 'ok';
+        passInput.className  = 'ok';
+        displayName.textContent = uid;
+        setTimeout(() => {
+          loginBox.style.display = 'none';
+          logoutBox.classList.add('show');
+        }, 300);
       } else {
-        msg.textContent = '✖ Please fix the errors above and try again.';
+        unameInput.className = 'error';
+        passInput.className  = 'error';
+        msg.textContent = '✖ Invalid username or password. Please try again.';
         msg.classList.add('fail');
+        passInput.value = '';
       }
     });
 
@@ -324,15 +336,15 @@
     logoutBtn.addEventListener('click', () => {
       logoutBox.classList.remove('show');
       loginBox.style.display = 'block';
-      unameInput.value = '';
-      passInput.value  = '';
-      unameInput.className = '';
-      passInput.className  = '';
+      unameInput.value       = '';
+      passInput.value        = '';
+      unameInput.className   = '';
+      passInput.className    = '';
       unameErr.classList.remove('show');
       passErr.classList.remove('show');
-      msg.className = 'msg';
-      passInput.type = 'password';
-      eyeBtn.textContent = '👁';
+      msg.className          = 'msg';
+      passInput.type         = 'password';
+      eyeBtn.textContent     = '👁';
     });
   </script>
 
